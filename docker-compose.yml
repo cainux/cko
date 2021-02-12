@@ -1,0 +1,11 @@
+version: "3.9"
+
+services:
+    postgres:
+        image: library/postgres:11.4-alpine
+        environment:
+            POSTGRES_USER: paymentGateway
+            POSTGRES_PASSWORD: PaymentGateway123
+            POSTGRES_DB: paymentGateway
+        ports:
+        -   "5432:5432"
