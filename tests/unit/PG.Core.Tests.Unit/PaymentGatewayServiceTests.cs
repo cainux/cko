@@ -17,7 +17,7 @@ namespace PG.Core.Tests.Unit
     {
         private readonly AutoMocker _mocker;
         private readonly Mock<IPaymentRepository> _mockRepository;
-        private readonly Mock<IAcquiringBankClient> _mockBankClient;
+        private readonly Mock<IBankClient> _mockBankClient;
 
         private readonly Faker<ProcessPaymentRequest> _requestGenerator;
 
@@ -27,10 +27,9 @@ namespace PG.Core.Tests.Unit
         {
             _mocker = new AutoMocker();
             _mockRepository = _mocker.GetMock<IPaymentRepository>();
-            _mockBankClient = _mocker.GetMock<IAcquiringBankClient>();
+            _mockBankClient = _mocker.GetMock<IBankClient>();
 
             _requestGenerator = new Faker<ProcessPaymentRequest>()
-                .RuleFor(t => t.PaymentId, _ => Guid.NewGuid().ToString())
                 .RuleFor(t => t.MerchantId, _ => Guid.NewGuid().ToString())
                 .RuleFor(t => t.CreditCardNumber, f => f.Finance.CreditCardNumber())
                 .RuleFor(t => t.ExpiryMonth, f => f.Date.Future().Month)
@@ -46,11 +45,11 @@ namespace PG.Core.Tests.Unit
         public async Task Get_Payment()
         {
             // Arrange
-            var paymentId = Guid.NewGuid().ToString();
+            var paymentId = Guid.NewGuid();
             var merchantId = Guid.NewGuid().ToString();
 
             _mockRepository
-                .Setup(x => x.GetAsync(paymentId, merchantId))
+                .Setup(x => x.GetAsync(paymentId))
                 .ReturnsAsync(new Payment
                 {
                     Id = paymentId,
@@ -59,7 +58,7 @@ namespace PG.Core.Tests.Unit
                 .Verifiable();
 
             // Act
-            var actual = await SUT.GetAsync(paymentId, merchantId);
+            var actual = await SUT.GetAsync(paymentId);
 
             // Assert
             _mocker.VerifyAll();
@@ -72,14 +71,13 @@ namespace PG.Core.Tests.Unit
         {
             // Arrange
             var paymentRequest = _requestGenerator.Generate();
-            var bankResponse = new ProcessPaymentResponse
+            var bankResponse = new BankResponse
             {
-                BankIdentifier = Guid.NewGuid().ToString(),
                 PaymentStatus = PaymentStatus.Failed
             };
 
             _mockBankClient
-                .Setup(x => x.ProcessPaymentAsync(It.IsAny<ProcessPaymentRequest>()))
+                .Setup(x => x.ProcessPaymentAsync(It.IsAny<Payment>()))
                 .ReturnsAsync(bankResponse)
                 .Verifiable();
 
@@ -93,7 +91,6 @@ namespace PG.Core.Tests.Unit
 
             // Assert
             _mocker.VerifyAll();
-            actual.BankIdentifier.Should().Be(bankResponse.BankIdentifier);
             actual.PaymentStatus.Should().Be(PaymentStatus.Failed);
         }
 
@@ -102,14 +99,13 @@ namespace PG.Core.Tests.Unit
         {
             // Arrange
             var paymentRequest = _requestGenerator.Generate();
-            var bankResponse = new ProcessPaymentResponse
+            var bankResponse = new BankResponse
             {
-                BankIdentifier = Guid.NewGuid().ToString(),
                 PaymentStatus = PaymentStatus.Succeeded
             };
 
             _mockBankClient
-                .Setup(x => x.ProcessPaymentAsync(It.IsAny<ProcessPaymentRequest>()))
+                .Setup(x => x.ProcessPaymentAsync(It.IsAny<Payment>()))
                 .ReturnsAsync(bankResponse)
                 .Verifiable();
 
@@ -123,7 +119,6 @@ namespace PG.Core.Tests.Unit
 
             // Assert
             _mocker.VerifyAll();
-            actual.BankIdentifier.Should().Be(bankResponse.BankIdentifier);
             actual.PaymentStatus.Should().Be(PaymentStatus.Succeeded);
         }
 
@@ -134,7 +129,7 @@ namespace PG.Core.Tests.Unit
             var paymentRequest = _requestGenerator.Generate();
 
             _mockBankClient
-                .Setup(x => x.ProcessPaymentAsync(It.IsAny<ProcessPaymentRequest>()))
+                .Setup(x => x.ProcessPaymentAsync(It.IsAny<Payment>()))
                 .Throws(new Exception())
                 .Verifiable();
 
@@ -152,34 +147,25 @@ namespace PG.Core.Tests.Unit
         }
 
         [Fact]
-        public async Task Credit_Card_Number_Should_Be_Stored_Masked()
+        public async Task Credit_Card_Number_Should_Be_Masked_When_Fetched()
         {
             // Arrange
-            var paymentRequest = _requestGenerator.Generate();
-            paymentRequest.CreditCardNumber = "3494-554249-61247";
-
-            var bankResponse = new ProcessPaymentResponse
-            {
-                BankIdentifier = Guid.NewGuid().ToString(),
-                PaymentStatus = PaymentStatus.Succeeded
-            };
-
-            _mockBankClient
-                .Setup(x => x.ProcessPaymentAsync(It.IsAny<ProcessPaymentRequest>()))
-                .ReturnsAsync(bankResponse)
-                .Verifiable();
+            var paymentId = Guid.NewGuid();
 
             _mockRepository
-                .Setup(x => x.UpsertAsync(It.IsAny<Payment>()))
-                .ReturnsAsync((Payment p) => p)
+                .Setup(x => x.GetAsync(paymentId))
+                .ReturnsAsync(new Payment
+                {
+                    CreditCardNumber = "3494-554249-61247"
+                })
                 .Verifiable();
 
             // Act
-            var actual = await SUT.ProcessAsync(paymentRequest);
+            var actual = await SUT.GetAsync(paymentId);
 
             // Assert
             _mocker.VerifyAll();
-            actual.MaskedCreditCardNumber.Should().Be("*************1247");
+            actual.CreditCardNumber.Should().Be("****");
         }
     }
 }

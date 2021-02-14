@@ -9,3 +9,11 @@ services:
             POSTGRES_DB: paymentGateway
         ports:
         -   "5432:5432"
+
+    seq:
+        image: datalust/seq:2021.1
+        environment:
+            ACCEPT_EULA: "Y"
+        ports:
+        -   "5341:5341"
+        -   "5342:80"

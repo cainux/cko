@@ -2,20 +2,20 @@
 using System.Threading.Tasks;
 using PG.Core;
 using PG.Core.Abstractions.AcquiringBank;
-using PG.Core.Requests;
+using PG.Core.Entities;
 
 namespace PG.Adapters.Adapters
 {
-    public class FakeBankClient : IAcquiringBankClient
+    public class FakeBankClient : IBankClient
     {
-        public async Task<ProcessPaymentResponse> ProcessPaymentAsync(ProcessPaymentRequest request)
+        public async Task<BankResponse> ProcessPaymentAsync(Payment request)
         {
             if (request.MerchantId == "ErrorMerchant")
             {
                 throw new Exception("Simulated error");
             }
 
-            var response = new ProcessPaymentResponse
+            var response = new BankResponse
             {
                 BankIdentifier = Guid.NewGuid().ToString(),
                 PaymentStatus = request.MerchantId == "FailMerchant" ? PaymentStatus.Failed : PaymentStatus.Succeeded
@@ -23,7 +23,7 @@ namespace PG.Adapters.Adapters
 
             if (request.MerchantId == "EdgeCaseMerchant")
             {
-                response.PaymentStatus = PaymentStatus.Ready;
+                response.PaymentStatus = PaymentStatus.Unprocessed;
             }
 
             return await Task.Run(() => response);

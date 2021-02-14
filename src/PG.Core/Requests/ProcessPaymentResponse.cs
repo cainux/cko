@@ -1,10 +1,10 @@
-﻿using PG.Core.Entities;
+﻿using System;
 
 namespace PG.Core.Requests
 {
     public class ProcessPaymentResponse
     {
-        public string BankIdentifier { get; set; }
+        public Guid PaymentId { get; set; }
         public PaymentStatus PaymentStatus { get; set; }
     }
 }

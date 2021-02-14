@@ -20,9 +20,9 @@ namespace PG.WebApi.Controllers
 
         [HttpGet]
         [Produces("application/json")]
-        public async Task<IActionResult> Get(string paymentId, string merchantId)
+        public async Task<IActionResult> Get(string paymentId)
         {
-            var payment = await _paymentGatewayService.GetAsync(paymentId, merchantId);
+            var payment = await _paymentGatewayService.GetAsync(new Guid(paymentId));
 
             if (payment != null)
             {
@@ -36,14 +36,14 @@ namespace PG.WebApi.Controllers
         [Consumes("application/json"), Produces("application/json")]
         public async Task<IActionResult> Process([FromBody] ProcessPaymentRequest request)
         {
-            var payment = await _paymentGatewayService.ProcessAsync(request);
+            var response = await _paymentGatewayService.ProcessAsync(request);
 
-            return payment.PaymentStatus switch
+            return response.PaymentStatus switch
             {
                 // These status codes are up for debate
-                PaymentStatus.Succeeded => Accepted(payment),
-                PaymentStatus.Failed => Created(string.Empty, payment),
-                PaymentStatus.Errored => StatusCode(500, payment),
+                PaymentStatus.Succeeded => Accepted(response),
+                PaymentStatus.Failed => Created(string.Empty, response),
+                PaymentStatus.Errored => StatusCode(500, response),
                 _ => throw new ArgumentOutOfRangeException()
             };
         }

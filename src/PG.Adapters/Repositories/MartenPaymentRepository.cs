@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Marten;
 using Microsoft.Extensions.Logging;
@@ -19,22 +20,20 @@ namespace PG.Adapters.Repositories
             _logger = logger;
         }
 
-        public async Task<Payment> GetAsync(string paymentId, string merchantId)
+        public async Task<Payment> GetAsync(Guid paymentId)
         {
             _logger.LogDebug("Fetching Payment from database");
 
             using var session = _documentStore.LightweightSession();
 
-            var queryResult = await session
-                .Query<Payment>()
-                .SingleOrDefaultAsync(x => x.Id == paymentId && x.MerchantId == merchantId);
+            var payment = await session.LoadAsync<Payment>(paymentId);
 
-            return queryResult;
+            return payment;
         }
 
         public async Task<Payment> UpsertAsync(Payment payment)
         {
-            _logger.LogDebug("Storing Payment to database");
+            _logger.LogDebug("Storing Payment {PaymentId} to database", payment.Id);
 
             using var session = _documentStore.LightweightSession();
 

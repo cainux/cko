@@ -11,63 +11,67 @@ namespace PG.Core.Services
     public class PaymentGatewayService : IPaymentGatewayService
     {
         private readonly IPaymentRepository _paymentRepository;
-        private readonly IAcquiringBankClient _acquiringBankClient;
+        private readonly IBankClient _bankClient;
         private readonly ILogger<PaymentGatewayService> _logger;
 
-        public PaymentGatewayService(IPaymentRepository paymentRepository, IAcquiringBankClient acquiringBankClient, ILogger<PaymentGatewayService> logger)
+        public PaymentGatewayService(IPaymentRepository paymentRepository, IBankClient bankClient, ILogger<PaymentGatewayService> logger)
         {
             _paymentRepository = paymentRepository;
-            _acquiringBankClient = acquiringBankClient;
+            _bankClient = bankClient;
             _logger = logger;
         }
 
-        public async Task<Payment> GetAsync(string paymentId, string merchantId)
+        public async Task<Payment> GetAsync(Guid paymentId)
         {
             _logger.LogInformation("Getting Payment: {Id}", paymentId);
-            return await _paymentRepository.GetAsync(paymentId, merchantId);
+            var payment = await _paymentRepository.GetAsync(paymentId);
+
+            if (payment != null)
+            {
+                payment.CreditCardNumber = "****";
+            }
+
+            return payment;
         }
 
-        public async Task<Payment> ProcessAsync(ProcessPaymentRequest paymentRequest)
+        public async Task<ProcessPaymentResponse> ProcessAsync(ProcessPaymentRequest request)
         {
-            _logger.LogInformation("Processing new Payment for Merchant {MerchantId}", paymentRequest.MerchantId);
+            _logger.LogInformation("Processing new Payment");
 
             var payment = await _paymentRepository.UpsertAsync(new Payment
             {
-                Id = paymentRequest.PaymentId,
-                MerchantId = paymentRequest.MerchantId,
-                Amount = paymentRequest.Amount,
-                CurrencyCode = paymentRequest.CurrencyCode,
-                MaskedCreditCardNumber = Mask(paymentRequest.CreditCardNumber),
-                ExpiryMonth = paymentRequest.ExpiryMonth,
-                ExpiryYear = paymentRequest.ExpiryYear,
-                Cvv = paymentRequest.Cvv,
-                PaymentStatus = PaymentStatus.Ready
+                MerchantId = request.MerchantId,
+                Amount = request.Amount,
+                CurrencyCode = request.CurrencyCode,
+                CreditCardNumber = request.CreditCardNumber,
+                ExpiryMonth = request.ExpiryMonth,
+                ExpiryYear = request.ExpiryYear,
+                Cvv = request.Cvv,
+                PaymentStatus = PaymentStatus.Unprocessed
             });
 
-            _logger.LogDebug("Payment created, forwarding request to Acquiring Bank");
+            _logger.LogInformation("Payment created with Id: {PaymentId}, forwarding request to Acquiring Bank", payment.Id);
 
             try
             {
-                var bankResponse = await _acquiringBankClient.ProcessPaymentAsync(paymentRequest);
+                var bankResponse = await _bankClient.ProcessPaymentAsync(payment);
                 payment.BankIdentifier = bankResponse.BankIdentifier;
                 payment.PaymentStatus = bankResponse.PaymentStatus;
             }
             catch (Exception e)
             {
-                _logger.LogWarning(e, "Encountered error during processing of Payment {PaymentId} for Merchant {MerchantId}", paymentRequest.PaymentId, paymentRequest.MerchantId);
+                _logger.LogWarning(e, "Encountered error during bank processing of Payment {PaymentId}", payment.Id);
                 payment.PaymentStatus = PaymentStatus.Errored;
             }
 
-            _logger.LogDebug("Saving processed Payment with status of {PaymentStatus}", payment.PaymentStatus);
-            return await _paymentRepository.UpsertAsync(payment);
-        }
+            _logger.LogInformation("Saving processed Payment with status of {PaymentStatus}", payment.PaymentStatus);
+            await _paymentRepository.UpsertAsync(payment);
 
-        private static string Mask(string input)
-        {
-            var maskSize = input.Length - 4;
-            var partial = input.Substring(maskSize);
-            var mask = new string('*', maskSize);
-            return $"{mask}{partial}";
+            return new ProcessPaymentResponse
+            {
+                PaymentId = payment.Id,
+                PaymentStatus = payment.PaymentStatus
+            };
         }
     }
 }

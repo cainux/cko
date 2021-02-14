@@ -34,7 +34,7 @@ namespace PG.WebApi
             services.AddMarten(Configuration.GetConnectionString("Marten"));
 
             services.AddTransient<IPaymentRepository, MartenPaymentRepository>();
-            services.AddTransient<IAcquiringBankClient, FakeBankClient>();
+            services.AddTransient<IBankClient, FakeBankClient>();
             services.AddTransient<IPaymentGatewayService, PaymentGatewayService>();
         }
 
