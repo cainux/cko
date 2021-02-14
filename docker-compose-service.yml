@@ -1,0 +1,14 @@
+version: "3.9"
+
+services:
+    payment-gateway:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        environment:
+            ConnectionStrings__Marten: "Host=postgres;Port=5432;Database=paymentGateway;Username=paymentGateway;password=PaymentGateway123"
+            Serilog__WriteTo__0__Name: "Console"
+            Serilog__WriteTo__1__Name: "Seq"
+            Serilog__WriteTo__1__Args__serverUrl: "http://seq:5341"
+        ports:
+        -   "5000:80"
