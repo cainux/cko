@@ -20,7 +20,7 @@ namespace PG.Adapters.Repositories
             _logger = logger;
         }
 
-        public async Task<Payment> GetAsync(Guid paymentId)
+        public async Task<Payment> GetAsync(long paymentId)
         {
             _logger.LogDebug("Fetching Payment from database");
 

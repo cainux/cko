@@ -1,4 +1,3 @@
-using System;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -39,7 +38,7 @@ namespace PG.WebApi.Tests.Sandbox
         [Fact]
         public void Payment_Id_Is_Returned()
         {
-            _processPaymentResponse.PaymentId.Should().NotBe(Guid.Empty);
+            _processPaymentResponse.PaymentId.Should().BeGreaterThan(0);
         }
 
         [Fact]

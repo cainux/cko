@@ -32,11 +32,7 @@ namespace PG.WebApi
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "CKO Payment Gateway", Version = "v1"});
             });
 
-            services.AddMarten(o =>
-            {
-                o.Connection(Configuration.GetConnectionString("Marten"));
-                o.DefaultIdStrategy = (mapping, storeOptions) => new CombGuidIdGeneration();
-            });
+            services.AddMarten(Configuration.GetConnectionString("Marten"));
 
             services.AddTransient<IPaymentRepository, MartenPaymentRepository>();
             services.AddTransient<IBankClient, FakeBankClient>();

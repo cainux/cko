@@ -19,7 +19,7 @@ namespace PG.WebApi.Tests.Unit.Payments
         public async Task Returns_Ok_When_Payment_Exists()
         {
             // Arrange
-            var paymentId = Guid.NewGuid();
+            var paymentId = 1000;
             var merchantId = Guid.NewGuid().ToString();
 
             Mocker.GetMock<IPaymentRepository>()
@@ -51,7 +51,7 @@ namespace PG.WebApi.Tests.Unit.Payments
         public async Task Returns_NotFound_When_Payment_Doesnt_Exist()
         {
             // Arrange
-            var paymentId = Guid.NewGuid().ToString();
+            var paymentId = 2000;
 
             // Act
             var actual = await SUT.GetAsync($"/payment?paymentId={paymentId}");

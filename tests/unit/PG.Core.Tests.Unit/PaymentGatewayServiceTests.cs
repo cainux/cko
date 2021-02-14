@@ -45,7 +45,7 @@ namespace PG.Core.Tests.Unit
         public async Task Get_Payment()
         {
             // Arrange
-            var paymentId = Guid.NewGuid();
+            var paymentId = 1000;
             var merchantId = Guid.NewGuid().ToString();
 
             _mockRepository
@@ -150,7 +150,7 @@ namespace PG.Core.Tests.Unit
         public async Task Credit_Card_Number_Should_Be_Masked_When_Fetched()
         {
             // Arrange
-            var paymentId = Guid.NewGuid();
+            var paymentId = 1000;
 
             _mockRepository
                 .Setup(x => x.GetAsync(paymentId))

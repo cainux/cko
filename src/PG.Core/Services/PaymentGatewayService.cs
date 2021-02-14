@@ -21,7 +21,7 @@ namespace PG.Core.Services
             _logger = logger;
         }
 
-        public async Task<Payment> GetAsync(Guid paymentId)
+        public async Task<Payment> GetAsync(long paymentId)
         {
             _logger.LogInformation("Getting Payment: {Id}", paymentId);
             var payment = await _paymentRepository.GetAsync(paymentId);

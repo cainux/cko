@@ -1,10 +1,8 @@
-﻿using System;
-
-namespace PG.WebApi.Tests.Sandbox.Entities
+﻿namespace PG.WebApi.Tests.Sandbox.Entities
 {
     public class Payment
     {
-        public Guid Id { get; set; }
+        public long Id { get; set; }
         public string MerchantId { get; set; }
 
         public decimal Amount { get; set; }

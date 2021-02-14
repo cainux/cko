@@ -20,9 +20,9 @@ namespace PG.WebApi.Controllers
 
         [HttpGet]
         [Produces("application/json")]
-        public async Task<IActionResult> Get(string paymentId)
+        public async Task<IActionResult> Get(int paymentId)
         {
-            var payment = await _paymentGatewayService.GetAsync(new Guid(paymentId));
+            var payment = await _paymentGatewayService.GetAsync(paymentId);
 
             if (payment != null)
             {
