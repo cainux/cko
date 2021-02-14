@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using PG.Core;
-using PG.Core.Requests;
 using PG.Core.Services;
+using PG.Core.Services.Requests;
 
 namespace PG.WebApi.Controllers
 {

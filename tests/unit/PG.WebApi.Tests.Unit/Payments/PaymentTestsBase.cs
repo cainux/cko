@@ -3,7 +3,7 @@ using System.Net.Http;
 using System.Text.Json;
 using Bogus;
 using Moq.AutoMock;
-using PG.Core.Requests;
+using PG.Core.Services.Requests;
 using Xunit.Abstractions;
 
 namespace PG.WebApi.Tests.Unit.Payments

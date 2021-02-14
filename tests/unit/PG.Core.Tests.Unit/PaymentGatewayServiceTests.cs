@@ -7,8 +7,8 @@ using Moq.AutoMock;
 using PG.Core.Abstractions.AcquiringBank;
 using PG.Core.Abstractions.Repositories;
 using PG.Core.Entities;
-using PG.Core.Requests;
 using PG.Core.Services;
+using PG.Core.Services.Requests;
 using Xunit;
 
 namespace PG.Core.Tests.Unit

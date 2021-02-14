@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PG.Core.Requests
+namespace PG.Core.Services.Requests
 {
     public class ProcessPaymentResponse
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using PG.Core.Entities;
-using PG.Core.Requests;
+using PG.Core.Services.Requests;
 
 namespace PG.Core.Services
 {

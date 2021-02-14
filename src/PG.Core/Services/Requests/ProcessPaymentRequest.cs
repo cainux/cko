@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace PG.Core.Requests
+namespace PG.Core.Services.Requests
 {
     public class ProcessPaymentRequest
     {

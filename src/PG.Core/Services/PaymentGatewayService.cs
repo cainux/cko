@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using PG.Core.Abstractions.AcquiringBank;
-using PG.Core.Requests;
 using PG.Core.Abstractions.Repositories;
 using PG.Core.Entities;
+using PG.Core.Services.Requests;
 
 namespace PG.Core.Services
 {
@@ -57,6 +57,7 @@ namespace PG.Core.Services
                 var bankResponse = await _bankClient.ProcessPaymentAsync(payment);
                 payment.BankIdentifier = bankResponse.BankIdentifier;
                 payment.PaymentStatus = bankResponse.PaymentStatus;
+                _logger.LogInformation("Response from Bank for PaymentId: {PaymentId} - {@BankResponse}", payment.Id, bankResponse);
             }
             catch (Exception e)
             {
