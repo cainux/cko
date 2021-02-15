@@ -18,11 +18,8 @@ namespace PG.WebApi.Tests.Sandbox
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(Environment.CurrentDirectory)
                 .AddJsonFile("appsettings.json", false)
-
-                // Not required right now but will come in useful when we add CI/CD
                 .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ENVIRONMENT")}.json", true)
                 .AddEnvironmentVariables()
-
                 .Build();
 
             var paymentGatewayUri = configuration.GetValue<string>("PaymentGatewayUri");
