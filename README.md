@@ -42,7 +42,7 @@ Built on/with:
 - .NET Core SDK 3.1.405
 - PowerShell/bash
 
-### Things to add
+### Things to add/discuss
 
 - Metrics
 - Authentication

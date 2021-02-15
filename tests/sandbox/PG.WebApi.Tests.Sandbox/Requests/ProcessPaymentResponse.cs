@@ -3,6 +3,7 @@
     public class ProcessPaymentResponse
     {
         public long PaymentId { get; set; }
-        public int PaymentStatus { get; set; }
+        public int StatusCode { get; set; }
+        public string StatusText { get; set; }
     }
 }

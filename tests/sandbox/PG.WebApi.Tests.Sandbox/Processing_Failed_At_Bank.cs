@@ -31,7 +31,8 @@ namespace PG.WebApi.Tests.Sandbox
         [Fact]
         public void Payment_Status_Is_Failed()
         {
-            _processPaymentResponse.PaymentStatus.Should().Be(20);
+            _processPaymentResponse.StatusCode.Should().Be(20);
+            _processPaymentResponse.StatusText.Should().Be("Failed");
         }
 
         [Fact]

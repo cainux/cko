@@ -40,7 +40,7 @@ namespace PG.WebApi.Controllers
         {
             var response = await _paymentGatewayService.ProcessAsync(request);
 
-            return response.PaymentStatus switch
+            return response.StatusCode switch
             {
                 // These status codes are up for debate
                 PaymentStatus.Succeeded => Accepted(response),

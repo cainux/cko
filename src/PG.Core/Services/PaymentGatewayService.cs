@@ -71,7 +71,7 @@ namespace PG.Core.Services
             return new ProcessPaymentResponse
             {
                 PaymentId = payment.Id,
-                PaymentStatus = payment.PaymentStatus
+                StatusCode = payment.PaymentStatus
             };
         }
     }

@@ -31,7 +31,8 @@ namespace PG.WebApi.Tests.Sandbox
         [Fact]
         public void Payment_Status_Is_Errored()
         {
-            _processPaymentResponse.PaymentStatus.Should().Be(30);
+            _processPaymentResponse.StatusCode.Should().Be(30);
+            _processPaymentResponse.StatusText.Should().Be("Errored");
         }
 
         [Fact]

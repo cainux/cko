@@ -17,7 +17,7 @@ namespace PG.WebApi.Tests.Sandbox
         public Processing_Succeeded(TestFixture fixture) : base(fixture)
         {
             _request = RequestGenerator.Generate();
-            _httpResponseMessage = HttpClient.PostAsJsonAsync("/payment", _request).Result;
+            _httpResponseMessage = HttpClient.PostAsJsonAsync("/payments", _request).Result;
             _processPaymentResponse = DeserializeJson<ProcessPaymentResponse>(_httpResponseMessage.Content.ReadAsStringAsync().Result);
         }
 
@@ -30,7 +30,8 @@ namespace PG.WebApi.Tests.Sandbox
         [Fact]
         public void Payment_Status_Is_Succeeded()
         {
-            _processPaymentResponse.PaymentStatus.Should().Be(10);
+            _processPaymentResponse.StatusCode.Should().Be(10);
+            _processPaymentResponse.StatusText.Should().Be("Succeeded");
         }
 
         [Fact]

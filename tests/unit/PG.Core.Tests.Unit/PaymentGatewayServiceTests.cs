@@ -91,7 +91,8 @@ namespace PG.Core.Tests.Unit
 
             // Assert
             _mocker.VerifyAll();
-            actual.PaymentStatus.Should().Be(PaymentStatus.Failed);
+            actual.StatusCode.Should().Be(PaymentStatus.Failed);
+            actual.StatusText.Should().Be("Failed");
         }
 
         [Fact]
@@ -119,7 +120,8 @@ namespace PG.Core.Tests.Unit
 
             // Assert
             _mocker.VerifyAll();
-            actual.PaymentStatus.Should().Be(PaymentStatus.Succeeded);
+            actual.StatusCode.Should().Be(PaymentStatus.Succeeded);
+            actual.StatusText.Should().Be("Succeeded");
         }
 
         [Fact]
@@ -143,7 +145,8 @@ namespace PG.Core.Tests.Unit
 
             // Assert
             _mocker.VerifyAll();
-            actual.PaymentStatus.Should().Be(PaymentStatus.Errored);
+            actual.StatusCode.Should().Be(PaymentStatus.Errored);
+            actual.StatusText.Should().Be("Errored");
         }
 
         [Fact]
