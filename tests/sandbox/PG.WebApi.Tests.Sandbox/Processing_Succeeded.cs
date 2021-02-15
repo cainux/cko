@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -8,30 +8,29 @@ using Xunit;
 
 namespace PG.WebApi.Tests.Sandbox
 {
-    public class Processing_Failed_At_Bank : TestBase, IClassFixture<TestFixture>
+    public class Processing_Succeeded : TestBase, IClassFixture<TestFixture>
     {
         private readonly HttpResponseMessage _httpResponseMessage;
         private readonly ProcessPaymentResponse _processPaymentResponse;
         private readonly ProcessPaymentRequest _request;
 
-        public Processing_Failed_At_Bank(TestFixture fixture) : base(fixture)
+        public Processing_Succeeded(TestFixture fixture) : base(fixture)
         {
             _request = RequestGenerator.Generate();
-            _request.MerchantId = "FailMerchant";
             _httpResponseMessage = HttpClient.PostAsJsonAsync("/payment/process", _request).Result;
             _processPaymentResponse = DeserializeJson<ProcessPaymentResponse>(_httpResponseMessage.Content.ReadAsStringAsync().Result);
         }
 
         [Fact]
-        public void Http_Status_Code_Returned_Is_Created()
+        public void Http_Status_Code_Returned_Is_Accepted()
         {
-            _httpResponseMessage.StatusCode.Should().Be(HttpStatusCode.Created);
+            _httpResponseMessage.StatusCode.Should().Be(HttpStatusCode.Accepted);
         }
 
         [Fact]
-        public void Payment_Status_Is_Failed()
+        public void Payment_Status_Is_Succeeded()
         {
-            _processPaymentResponse.PaymentStatus.Should().Be(20);
+            _processPaymentResponse.PaymentStatus.Should().Be(10);
         }
 
         [Fact]
@@ -58,7 +57,7 @@ namespace PG.WebApi.Tests.Sandbox
                 ExpiryMonth = _request.ExpiryMonth,
                 ExpiryYear = _request.ExpiryYear,
                 Cvv = _request.Cvv,
-                PaymentStatus = 20
+                PaymentStatus = 10
             });
 
             payment.BankIdentifier.Should().NotBeNullOrEmpty();
