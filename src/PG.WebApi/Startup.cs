@@ -1,12 +1,11 @@
 using Marten;
-using Marten.Schema.Identity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using PG.Adapters.Adapters;
+using PG.Adapters.AcquiringBank;
 using PG.Adapters.Repositories;
 using PG.Core.Abstractions.AcquiringBank;
 using PG.Core.Abstractions.Repositories;

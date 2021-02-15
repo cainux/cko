@@ -5,7 +5,7 @@ using PG.Core;
 using PG.Core.Abstractions.AcquiringBank;
 using PG.Core.Entities;
 
-namespace PG.Adapters.Adapters
+namespace PG.Adapters.AcquiringBank
 {
     public class FakeBankClient : IBankClient
     {
