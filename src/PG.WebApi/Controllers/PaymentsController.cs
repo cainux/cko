@@ -8,19 +8,20 @@ using PG.Core.Services.Requests;
 namespace PG.WebApi.Controllers
 {
     [ApiController]
-    [Route("payment")]
-    public class PaymentController : ControllerBase
+    [Route("payments")]
+    public class PaymentsController : ControllerBase
     {
         private readonly IPaymentGatewayService _paymentGatewayService;
 
-        public PaymentController(IPaymentGatewayService paymentGatewayService)
+        public PaymentsController(IPaymentGatewayService paymentGatewayService)
         {
             _paymentGatewayService = paymentGatewayService;
         }
 
         [HttpGet]
+        [Route("{paymentId}")]
         [Produces("application/json")]
-        public async Task<IActionResult> Get(int paymentId)
+        public async Task<IActionResult> Get([FromRoute] int paymentId)
         {
             var payment = await _paymentGatewayService.GetAsync(paymentId);
 
@@ -32,9 +33,10 @@ namespace PG.WebApi.Controllers
             return NotFound();
         }
 
-        [HttpPost, Route("process")]
-        [Consumes("application/json"), Produces("application/json")]
-        public async Task<IActionResult> Process([FromBody] ProcessPaymentRequest request)
+        [HttpPost]
+        [Consumes("application/json")]
+        [Produces("application/json")]
+        public async Task<IActionResult> Post([FromBody] ProcessPaymentRequest request)
         {
             var response = await _paymentGatewayService.ProcessAsync(request);
 

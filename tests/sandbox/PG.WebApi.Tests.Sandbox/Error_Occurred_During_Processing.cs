@@ -18,7 +18,7 @@ namespace PG.WebApi.Tests.Sandbox
         {
             _request = RequestGenerator.Generate();
             _request.MerchantId = "ErrorMerchant";
-            _httpResponseMessage = HttpClient.PostAsJsonAsync("/payment/process", _request).Result;
+            _httpResponseMessage = HttpClient.PostAsJsonAsync("/payments", _request).Result;
             _processPaymentResponse = DeserializeJson<ProcessPaymentResponse>(_httpResponseMessage.Content.ReadAsStringAsync().Result);
         }
 
@@ -45,7 +45,7 @@ namespace PG.WebApi.Tests.Sandbox
         {
             var paymentId = _processPaymentResponse.PaymentId;
             var payment = await DeserializeJsonAsync<Payment>(
-                await HttpClient.GetStreamAsync($"/payment?paymentId={paymentId}")
+                await HttpClient.GetStreamAsync($"/payments/{paymentId}")
             );
 
             payment.Should().BeEquivalentTo(new

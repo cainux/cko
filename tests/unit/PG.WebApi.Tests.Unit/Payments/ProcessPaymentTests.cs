@@ -5,6 +5,7 @@ using FluentAssertions;
 using Moq;
 using PG.Core.Abstractions.Repositories;
 using PG.Core.Entities;
+using PG.Core.Services.Requests;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -17,23 +18,18 @@ namespace PG.WebApi.Tests.Unit.Payments
         [Fact]
         public async Task Process_Returns_BadRequest_When_Request_Invalid()
         {
-            // This just gives a rough idea of the tests that need to be created
-            // We'll probably want to _really_ test the validation with loads of
-            // different variations of the payload.
-
             // Arrange
-            var request = RequestGenerator.Generate();
-            request.MerchantId = null;
+            var request = new ProcessPaymentRequest();
 
             // Act
-            var actual = await SUT.PostAsJsonAsync("/payment/process", request);
+            var actual = await SUT.PostAsJsonAsync("/payments", request);
 
             // Assert
             actual.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
 
         [Fact]
-        public async Task Process_Returns_Accepted_When_Request_Succeeds()
+        public async Task Process_Returns_Created_When_Request_Succeeds()
         {
             // Arrange
             var request = RequestGenerator.Generate();
@@ -44,7 +40,7 @@ namespace PG.WebApi.Tests.Unit.Payments
                 .Verifiable();
 
             // Act
-            var actual = await SUT.PostAsJsonAsync("/payment/process", request);
+            var actual = await SUT.PostAsJsonAsync("/payments", request);
 
             // Assert
             Mocker.VerifyAll();
@@ -64,7 +60,7 @@ namespace PG.WebApi.Tests.Unit.Payments
                 .Verifiable();
 
             // Act
-            var actual = await SUT.PostAsJsonAsync("/payment/process", request);
+            var actual = await SUT.PostAsJsonAsync("/payments", request);
 
             // Assert
             Mocker.VerifyAll();
@@ -84,7 +80,7 @@ namespace PG.WebApi.Tests.Unit.Payments
                 .Verifiable();
 
             // Act
-            var actual = await SUT.PostAsJsonAsync("/payment/process", request);
+            var actual = await SUT.PostAsJsonAsync("/payments", request);
 
             // Assert
             Mocker.VerifyAll();
@@ -104,7 +100,7 @@ namespace PG.WebApi.Tests.Unit.Payments
                 .Verifiable();
 
             // Act
-            var actual = await SUT.PostAsJsonAsync("/payment/process", request);
+            var actual = await SUT.PostAsJsonAsync("/payments", request);
 
             // Assert
             Mocker.VerifyAll();

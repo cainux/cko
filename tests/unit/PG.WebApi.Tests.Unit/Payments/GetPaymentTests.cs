@@ -33,7 +33,7 @@ namespace PG.WebApi.Tests.Unit.Payments
                 .Verifiable();
 
             // Act
-            var response = await SUT.GetAsync($"/payment?paymentId={paymentId}");
+            var response = await SUT.GetAsync($"/payments/{paymentId}");
             var actual = await JsonSerializer.DeserializeAsync<Payment>(await response.Content.ReadAsStreamAsync(), JsonSerializerOptions);
 
             // Assert
@@ -54,7 +54,7 @@ namespace PG.WebApi.Tests.Unit.Payments
             var paymentId = 2000;
 
             // Act
-            var actual = await SUT.GetAsync($"/payment?paymentId={paymentId}");
+            var actual = await SUT.GetAsync($"/payments/{paymentId}");
 
             // Assert
             actual.StatusCode.Should().Be(HttpStatusCode.NotFound);
